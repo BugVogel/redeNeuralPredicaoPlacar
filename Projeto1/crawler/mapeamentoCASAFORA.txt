@@ -1,0 +1,19 @@
+AméricaMineiro#Independência
+AtléticoParanaense#Arena da Baixada
+Bahia#ArenaFonteNova
+Botafogo#NiltonSantos
+Ceará#ArenaCastelão
+Chapecoense#ArenaCondá
+Corinthians#ArenaCorinthians
+Cruzeiro#Mineirão
+Flamengo#LusoBrasileiro
+Fluminense#Maracanã
+Grêmio#ArenadoGrêmio
+Internacional#Beira-Rio
+Palmeiras#Allianz Parque
+Paraná#VilaCapanema
+Santos#VilaBelmiro
+SãoPaulo#Morumbi
+Sport#IlhadoRetiro
+VascodaGama#SãoJanuário
+Vitória#Barradão
