@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.LinkedList;
 
 /* 
   Esta classe tem como funcionalidade ler os arquivos extraídos com as rodadas, coloca-los na memória e retorná-los.
@@ -215,11 +216,18 @@ public class RoundReader {
                     line = br.readLine();
                     if(line != null){
                         String[] lineSplit = line.split("#");
-                        if(lineSplit[0].equals(teamName) || lineSplit[1].equals(teamName)){
+                        if(lineSplit[0].equals(teamName) ){
                             returning[count][0] = Integer.parseInt(lineSplit[2]);
                             returning[count][1] = Integer.parseInt(lineSplit[3]);
                             count++;
                         }
+                        if(lineSplit[1].equals(teamName)){
+                            returning[count][1] = Integer.parseInt(lineSplit[2]);
+                            returning[count][0] = Integer.parseInt(lineSplit[3]);
+                            count++;
+                            
+                        }
+                        
                     }
                 }while(line != null);  
                 br.close();
@@ -268,5 +276,104 @@ public class RoundReader {
         }
         return null; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
     }
+    
+    
+    //Retorna um array de string com todos os times existentes do dataset
+    
+    public LinkedList<String> getTeams() throws FileNotFoundException, IOException{
+        
+        
+        
+        LinkedList<String> teams = new LinkedList<String>();
+        String currentPath;
+        String line;
+        
+        
+        for(int i=0; i< paths.length; i++){
+            
+            currentPath = paths[i];
+            line = "";
+            File file = new File(currentPath);
+            
+            if(file.isFile()){
+            
+                 BufferedReader br = new BufferedReader(new FileReader(currentPath));
+                 
+                 while(br.ready()){
+                     
+                     line = br.readLine();
+                     
+                     String[] lineData = line.split("#");
+                     String team1 = lineData[0];
+                     String team2 = lineData[1];
+
+                     
+                     if(!teams.contains(team1)){
+                         teams.add(team1);
+                         
+                     }
+                     
+                     if(!teams.contains(team2)){
+                         teams.add(team2);
+                     }
+    
+                 }
+
+            }
+            else{
+                System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
+            }
+             
+        }
+        
+        
+        
+        return teams;
+    }
+    
+    
+    
+    
+    
+    public int homeMatch(String teamName) throws IOException{
+        
+        String currentPath;
+        String line;
+        int homeMatchers = 0;
+        
+       
+        for(int i=0; i< paths.length; i++){
+            
+            currentPath = paths[i];
+            line = "";
+            File file = new File(currentPath);
+            
+            if(file.isFile()){
+            
+                 BufferedReader br = new BufferedReader(new FileReader(currentPath));
+                 
+                 while(br.ready()){
+                     
+                     line = br.readLine();
+                     String[] lineSplit = line.split("#");
+                     
+                     
+                     if(lineSplit[0].equals(teamName) && lineSplit[5].equals("1")  ){
+                            homeMatchers++;      
+                     }
+                     
+                     if(lineSplit[1].equals(teamName) && lineSplit[5].equals("0")){
+                          homeMatchers++;  
+                     }
+                     
+                 }
+                 
+            }
+            
+        }   
+        
+        return homeMatchers;
+    }
+    
 }
  

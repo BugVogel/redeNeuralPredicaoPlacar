@@ -1,6 +1,7 @@
 
 package View;
 
+import Model.Supervisao;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,6 +15,11 @@ import org.neuroph.core.data.DataSetRow;
 import org.neuroph.core.learning.SupervisedLearning;
 import org.neuroph.nnet.*;
 import org.neuroph.util.*;
+import Controller.*;
+import Model.*;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 
         
         
@@ -25,25 +31,66 @@ public class Redeneural {
         
         
         
-        DataSet data = new DataSet(0);
+        DataSet data = new DataSet(5);
+        String[] paths = new String[2];
+        paths[0] = "../2015BD.txt";
+        paths[1] = "../2016BD.txt";
+        RoundReader r = new RoundReader(paths);
         
+        LinkedList<String> teams = r.getTeams();
         
-        File dataBase = new File("../2015BD.txt");
-        FileReader textData = new FileReader(dataBase);
-        BufferedReader b = new BufferedReader(textData);
+        Iterator i =teams.iterator();
         
-        while(b.ready()){
+        while(i.hasNext()){
+        
             
-            String line = b.readLine();
+            String team = (String)i.next();
+            
+            int[][] scores = r.returnAllAtkDefScores(team);
+            double homeMatchers = r.homeMatch(team);
+            double[] row = new double[5];
+            double wins=0;
+            
+            //Soma todos os pontos de ataque e defesa
+            for(int a =0; a<scores.length; a++){
+                
+                
+                row[0] = data.size();
+                row[1] += scores[a][0];
+                row[2] += scores[a][1];
+                if(scores[a][0] > scores[a][1] ){
+                    wins++;
+                }
+                
+                
+    
+            }   
+            row[1] /= scores.length; //media de gols feitos por partida
+            row[2] /= scores.length; //media de gols recebidos por partida
+            row[3] = wins/scores.length; //porcentagem de vitórias por partida
+            row[4] = homeMatchers/scores.length; //porcentagem de partidas em casa por partida
+            
+            row[1] = Math.round(row[1]);
+            row[2] = Math.round(row[2]);
 
-            String[] row = 
-        
-        
-        
+            data.addRow(row);
+            
+            
+            System.out.println(row[1]);
+            
+           
         }
         
-        b.close();
-        textData.close();
+        NeuralNetwork web = new NeuralNetwork();
+        Supervisao s = new Supervisao();
+        
+        
+        Layer layer1  = new Layer();
+        
+        
+        
+
+        
         
         
         
@@ -63,24 +110,24 @@ public class Redeneural {
         Connection cN2l1 = new Connection(neuron2l1,neuron1l2);
         Connection cN3l1 = new Connection(neuron3l1,neuron1l2);
         
-        Layer layer1  = new Layer();
+        
         
         
        
        
         
 
-        NeuralNetwork rede = new NeuralNetwork();
+      
         
         
         
        
        
         
-        Supervisao s = new Supervisao();
-        s.setNeuralNetwork(rede);
+        
+        
        
-       
+      
         
         
         cN1l1.setWeight(w);
