@@ -38,18 +38,17 @@ public class Redeneural {
         RoundReader r = new RoundReader(paths);
         
         LinkedList<String> teams = r.getTeams();
-        
         Iterator i =teams.iterator();
+        int round=2;
         
         while(i.hasNext()){
         
             
             String team = (String)i.next();
             
-            int[][] scores = r.returnAllAtkDefScores(team);
-            double homeMatchers = r.homeMatch(team);
+            int[][] scores = r.returnAllAtkDefUntilRound(team, round);
             double[] row = new double[5];
-            double wins=0;
+        
             
             //Soma todos os pontos de ataque e defesa
             for(int a =0; a<scores.length; a++){
@@ -58,25 +57,22 @@ public class Redeneural {
                 row[0] = data.size();
                 row[1] += scores[a][0];
                 row[2] += scores[a][1];
-                if(scores[a][0] > scores[a][1] ){
-                    wins++;
-                }
+    
                 
                 
     
             }   
             row[1] /= scores.length; //media de gols feitos por partida
             row[2] /= scores.length; //media de gols recebidos por partida
-            row[3] = wins/scores.length; //porcentagem de vitórias por partida
-            row[4] = homeMatchers/scores.length; //porcentagem de partidas em casa por partida
             
-            row[1] = Math.round(row[1]);
-            row[2] = Math.round(row[2]);
-
+            row[3] =  r.returnAdvantageUntilRound(team, round); //Valor em porcentagem de pior ou melhor que outro time
+            row[4] = r.isHome(team, round); //porcentagem de partidas em casa por partida
+            
+          
             data.addRow(row);
             
-            
-            System.out.println(row[1]);
+            //round++;
+            System.out.println(row[3]);
             
            
         }

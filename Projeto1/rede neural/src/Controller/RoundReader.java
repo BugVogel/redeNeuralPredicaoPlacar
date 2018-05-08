@@ -152,9 +152,9 @@ public class RoundReader {
             else{
                 System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
             }
-            return returning;
+            
         }
-        return null; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
+        return returning; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
     }
     
     /*Função que retorna o score de ataque na posição 0 e de defesa na posição 1 de um time, para uma determinada rodada.
@@ -180,9 +180,19 @@ public class RoundReader {
                             count++;
                         }
                         if(count == round){
+
                             int[] returning = new int[2];
-                            returning[0] = Integer.parseInt(lineSplit[2]);
-                            returning[1] = Integer.parseInt(lineSplit[3]);
+                            
+                            if(lineSplit[0].equals(teamName) ){
+                                returning[0] = Integer.parseInt(lineSplit[2]);
+                                returning[1] = Integer.parseInt(lineSplit[3]);
+                            }
+                            
+                            else if(lineSplit[1].equals(teamName)){
+                                returning[1] = Integer.parseInt(lineSplit[2]);
+                                returning[0] = Integer.parseInt(lineSplit[3]);
+                            }
+                            
                             return returning;
                         }
                     }
@@ -235,9 +245,9 @@ public class RoundReader {
             else{
                 System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
             }
-            return returning;
+            
         }
-        return null; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
+        return returning; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
     }
     
     
@@ -248,6 +258,7 @@ public class RoundReader {
         String line;
         int count = 0;
         String[] returning = new String[this.teamVersusAmount(teamName1, teamName2)];
+        
         
         for(int i = 0; i<paths.length; i++){
             currentPath = paths[i];
@@ -263,7 +274,12 @@ public class RoundReader {
                         if(lineSplit[0].equals(teamName1) || lineSplit[1].equals(teamName1)){
                             if(lineSplit[0].equals(teamName2) || lineSplit[1].equals(teamName2)){
                                 returning[count] = line;
+
+                                count++;
                             }    
+                            //if(count == returning.length-1){
+                             //   return returning;
+                            //}
                         }
                     }
                 }while(line != null);  
@@ -272,9 +288,9 @@ public class RoundReader {
             else{
                 System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
             }
-            return returning;
+            
         }
-        return null; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
+        return returning; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
     }
     
     
@@ -335,45 +351,148 @@ public class RoundReader {
     
     
     
-    public int homeMatch(String teamName) throws IOException{
+    public int homeAllMatch(String teamName) throws IOException{
         
+        
+        String[] lines = this.returnAllMatches(teamName);
+        int contHome=0;
+        
+        for(int i =0; i <lines.length; i++){
+            String[] currentSplit = lines[i].split("#");
+            if(Integer.parseInt(currentSplit[5]) == 1){
+                contHome++;
+            }
+        }
+        return contHome;
+    }
+    
+    
+  
+    
+    
+    
+    public int isHome(String teamName, int round) throws IOException{
+        
+        
+        String line = this.returnMatch(teamName, round);
+        
+        String[] lineSplit = line.split("#");
+        
+        
+        if(lineSplit[5].equals("undefined"))
+            return 0;
+        
+        else if(Integer.parseInt(lineSplit[5]) == 1)
+            return 1;
+        else
+            return 0;
+        
+    }
+    
+     public int[][] returnAllAtkDefUntilRound(String teamName, int round) throws FileNotFoundException, IOException{
         String currentPath;
         String line;
-        int homeMatchers = 0;
+        int count = 0;
+        int[][] returning = new int[this.teamMatchAmount(teamName)][2];
         
-       
-        for(int i=0; i< paths.length; i++){
-            
+        for(int i = 0; i<paths.length; i++){
             currentPath = paths[i];
             line = "";
+            
             File file = new File(currentPath);
-            
             if(file.isFile()){
-            
-                 BufferedReader br = new BufferedReader(new FileReader(currentPath));
-                 
-                 while(br.ready()){
-                     
-                     line = br.readLine();
-                     String[] lineSplit = line.split("#");
-                     
-                     
-                     if(lineSplit[0].equals(teamName) && lineSplit[5].equals("1")  ){
-                            homeMatchers++;      
-                     }
-                     
-                     if(lineSplit[1].equals(teamName) && lineSplit[5].equals("0")){
-                          homeMatchers++;  
-                     }
-                     
-                 }
-                 
+                BufferedReader br = new BufferedReader(new FileReader(currentPath));
+                do{
+                    line = br.readLine();
+                    if(line != null){
+                        String[] lineSplit = line.split("#");
+                        if(lineSplit[0].equals(teamName) ){
+                            returning[count][0] = Integer.parseInt(lineSplit[2]);
+                            returning[count][1] = Integer.parseInt(lineSplit[3]);
+                            count++;
+                        }
+                        if(lineSplit[1].equals(teamName)){
+                            returning[count][1] = Integer.parseInt(lineSplit[2]);
+                            returning[count][0] = Integer.parseInt(lineSplit[3]);
+                            count++;
+                            
+                        }
+                        
+                    }
+                }while(line != null || count<round);  
+                br.close();
+                
+                if(count == round){
+                    return returning;
+                }
+            }
+            else{
+                System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
             }
             
-        }   
-        
-        return homeMatchers;
+        }
+        return returning; //Significa que não foi encontrado uma partida com a rodada denominada ou com o nome do time desejado
     }
+     
+     
+     /*Método que retorna a vantagem (score/gols recebidos) de um time contra o outro até uma certa rodada
+      Caso o parâmetro round seja 0, retorna a vantagm até a última rodada possível*/
+    
+    public double returnAdvantageUntilRound(String team1, int round) throws IOException{
+        
+        
+        
+        String line = this.returnMatch(team1, round);
+        String lineSplit[] = line.split("#");
+        String adversary = "";
+        int i = 0;
+        double atk = 0, def = 0;
+       
+        if(lineSplit[0].equals(team1)){
+            adversary = lineSplit[1];
+        }
+        else if(lineSplit[1].equals(team1)){
+            adversary = lineSplit[0];
+        }
+        
+        String[] matches = this.returnAllVersusMatches(team1, adversary);
+        
+        if(matches.length < round){
+            System.out.println("Round inserido maior que o possivel."+round+" "+matches.length);
+            return 0;
+        }
+        
+        if(round == 0){
+            round = matches.length;
+        }
+        
+        
+        for(i = 0; line.equals(matches[i]); i++){
+            lineSplit = matches[i].split("#");    
+            System.out.println("i = "+i);
+            if(lineSplit[0].equals(team1)){
+                atk = atk+(Double.parseDouble(lineSplit[2]));
+                System.out.println("Ataque: "+atk);
+                def = def+(Double.parseDouble(lineSplit[3]));
+                System.out.println("Defesa: "+def);
+            }
+            else if(lineSplit[1].equals(team1)){
+                atk = atk+(Double.parseDouble(lineSplit[3]));
+                System.out.println("Ataque: "+atk);
+                def = def+(Double.parseDouble(lineSplit[2]));
+                System.out.println("Defesa: "+def);
+            } 
+          
+        }
+
+        double retorno = (atk+1)/(def+1);
+        retorno = 1 - retorno;
+        return retorno;
+    }
+
+     
+     
+     
     
 }
  
