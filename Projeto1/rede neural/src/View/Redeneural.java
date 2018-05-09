@@ -1,4 +1,5 @@
 
+
 package View;
 
 import Model.Supervisao;
@@ -36,46 +37,32 @@ public class Redeneural {
         paths[0] = "../2015BD.txt";
         paths[1] = "../2016BD.txt";
         RoundReader r = new RoundReader(paths);
+        Controller c = new Controller();
         
         LinkedList<String> teams = r.getTeams();
-        Iterator i =teams.iterator();
-        int round=2;
+        Iterator it =teams.iterator();
+        int round=1, index = 0;
         
-        while(i.hasNext()){
         
+        for(int j = 0; j<1/*NUMERO DE RODADAS*/; j++){
+            while(it.hasNext()){
+
+                String team = (String)it.next();
+                Team newTeam = new Team(team);
+
+                double[] row = new double[4];
+                int atk = 0, def = 0;
+
+                int[][] placares = r.returnAllAtkDefScores(team);
+
+                newTeam.addAttackValue(placares[j][0]);
+                newTeam.addDefenseValue(placares[j][1]);
+            }
+
+            /*LOGICA DE TREINAR A REDE NEURAL*/
             
-            String team = (String)i.next();
-            
-            int[][] scores = r.returnAllAtkDefUntilRound(team, round);
-            double[] row = new double[5];
-        
-            
-            //Soma todos os pontos de ataque e defesa
-            for(int a =0; a<scores.length; a++){
-                
-                
-                row[0] = data.size();
-                row[1] += scores[a][0];
-                row[2] += scores[a][1];
-    
-                
-                
-    
-            }   
-            row[1] /= scores.length; //media de gols feitos por partida
-            row[2] /= scores.length; //media de gols recebidos por partida
-            
-            row[3] =  r.returnAdvantageUntilRound(team, round); //Valor em porcentagem de pior ou melhor que outro time
-            row[4] = r.isHome(team, round); //porcentagem de partidas em casa por partida
-            
-          
-            data.addRow(row);
-            
-            //round++;
-            System.out.println(row[3]);
-            
-           
         }
+
         
         NeuralNetwork web = new NeuralNetwork();
         Supervisao s = new Supervisao();
