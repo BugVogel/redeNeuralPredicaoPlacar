@@ -491,7 +491,7 @@ public class RoundReader {
     }
 
      
-     public double returnLastMatch(String team1, int round) throws IOException{
+     public String returnLastMatch(String team1, int round) throws IOException{
         
         String line = this.returnMatch(team1, round);
         String lineSplit[] = line.split("#");
@@ -517,10 +517,10 @@ public class RoundReader {
         }
         
         if(num_partida > 1){
-            return Double.parseDouble(matches[num_partida-1]);
+            return matches[i];
         }
         else{
-            return 0.0;
+            return null;
         }
         
     }
