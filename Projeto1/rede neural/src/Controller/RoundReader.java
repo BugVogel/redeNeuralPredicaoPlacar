@@ -526,5 +526,38 @@ public class RoundReader {
     }
      
     
+  public int returnNumberOfAvaliableRounds() throws IOException{
+        String currentPath;
+        String line;
+        int count = 0, rodadas = 0;
+        
+        for(int i = 0; i<paths.length; i++){
+            currentPath = paths[i];
+            line = "";
+            
+            File file = new File(currentPath);
+            if(file.isFile()){
+                BufferedReader br = new BufferedReader(new FileReader(currentPath));
+                do{
+                    line = br.readLine();
+                    if(line != null){
+                        count++;
+                        if(count == 10){
+                            rodadas++;
+                            count = 0;
+                        }
+                    }    
+                }while(line != null);  
+                br.close();
+            }
+            else{
+                System.out.println("Erro no endereçamento dos caminhos dos arquivos de informações.");
+            }
+            
+        }
+        return rodadas; 
+    }
+  
+  
 }
  
