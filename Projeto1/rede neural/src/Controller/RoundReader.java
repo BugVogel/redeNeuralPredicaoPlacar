@@ -517,7 +517,7 @@ public class RoundReader {
         }
         
         if(num_partida > 1){
-            return matches[i];
+            return matches[num_partida];
         }
         else{
             return null;
