@@ -23,3 +23,4 @@ public class Controller {
     public void setListaTimes(ArrayList<Team> listaTimes) {
         this.listaTimes = listaTimes;
     }
+}
