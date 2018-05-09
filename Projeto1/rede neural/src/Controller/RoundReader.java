@@ -491,7 +491,39 @@ public class RoundReader {
     }
 
      
-     
+     public double returnLastMatch(String team1, int round) throws IOException{
+        
+        String line = this.returnMatch(team1, round);
+        String lineSplit[] = line.split("#");
+        String adversary = "";
+        int num_partida = 0;
+        double atk = 0.0, def = 0.0;
+        
+        if(lineSplit[0].equals(team1)){
+            adversary = lineSplit[1];
+        }
+        else if(lineSplit[1].equals(team1)){
+            adversary = lineSplit[0];
+        }
+       
+        String[] matches = this.returnAllVersusMatches(team1, adversary);
+       
+        for(int i = 0; i<matches.length; i++){
+            String currentLine = matches[i];
+            if(matches[i].equals(line)){
+                num_partida = i;
+                System.out.println("Esta é a "+(num_partida+1)+"a partida");
+            }
+        }
+        
+        if(num_partida > 1){
+            return Double.parseDouble(matches[num_partida-1]);
+        }
+        else{
+            return 0.0;
+        }
+        
+    }
      
     
 }
