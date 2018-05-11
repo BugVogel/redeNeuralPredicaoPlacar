@@ -23,16 +23,6 @@ public class Controller {
     public void setListaTimes(ArrayList<Team> listaTimes) {
         this.listaTimes = listaTimes;
     }
-    
-    
-      public double normalize(double num){
-        
-        
-        num = (num-1)/9;
-        
-        
-        return num;
-    }
 
 
 }

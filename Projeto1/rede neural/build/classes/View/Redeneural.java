@@ -35,7 +35,7 @@ public class Redeneural {
         
         
         
-        DataSet data = new DataSet(6);
+        DataSet data = new DataSet(7);
         String[] paths = new String[1];
         paths[0] = "../BD_partidas.txt";
         RoundReader r = new RoundReader(paths);
@@ -44,8 +44,6 @@ public class Redeneural {
         LinkedList<String> teams = r.getTeams();
         int round=1, index = 0;
         double atk = 0, def = 0;
-        final int divNormScore = 10;
-        
         
    
         
@@ -68,11 +66,11 @@ public class Redeneural {
                     team.addDefenseValue(atkDef[1]);
                     team.setMatchCount(team.getMatchCount()+1);
                     
-                    double[] row = new double[6];
+                    double[] row = new double[7];
                     
                     row[0] = (double) team.getID();
-                    row[1] = team.getAttackValue()/divNormScore;
-                    row[2] = team.getDefenseValue()/divNormScore;
+                    row[1] = team.getAttackValue();
+                    row[2] = team.getDefenseValue();
                     String last = r.returnLastMatch(team.getName(), j+1);
                    
                     if(last != null){
@@ -86,7 +84,7 @@ public class Redeneural {
                             def = Double.parseDouble(lastSplit[2]);
                         }
                         
-                        row[3] = c.normalize((double)(1-((atk+1)/(def+1))));
+                        row[3] = (double)(1-((atk+1)/(def+1)));
                         
                        
                     }
@@ -95,7 +93,8 @@ public class Redeneural {
                     }
                                         
                     row[4] = r.isHome(team.getName(), j+1);
-                    row[5] = atkDef[0]/divNormScore;
+                    row[5] = atkDef[0];
+                    row[6] = atkDef[1];
                     
                     data.addRow(row);
                     
@@ -147,15 +146,110 @@ public class Redeneural {
             }
         };
             
+            
+            
+           
+        
+        NeuralNetwork web = new NeuralNetwork();
+        Supervisao s = new Supervisao();
+        
+        
+        //Camada intermediaria
+        Layer layer2 = new Layer();
+        
+        //Neuronios intermediarios
+        Neuron scoreAtk = new Neuron();
+        Neuron scoreDef = new Neuron();
+        Neuron advantage = new Neuron();
+        Neuron homeAdvantage = new Neuron();
+
+        scoreAtk.setInputFunction(function);
+        scoreDef.setInputFunction(function);
+        advantage.setInputFunction(function);
+        homeAdvantage.setInputFunction(function);
+        
+        /*
+        layer2.addNeuron(scoreAtk);
+        layer2.addNeuron(scoreDef);
+        layer2.addNeuron(advantage);
+        layer2.addNeuron(homeAdvantage);
+        */
+        
+        
+        //Camada de entrada
+        Layer layer1  = new Layer();
+        
+        Neuron input1 = new Neuron();
+        Neuron input2  = new Neuron();
+        Neuron input3 = new Neuron();
+        Neuron input4 = new Neuron();
+        
+        input1.setInputFunction(function);
+        input2.setInputFunction(function);
+        input3.setInputFunction(function);
+        input4.setInputFunction(function);
+        
+        //Neuronios de entrada
+        /*layer1.addNeuron(input1);
+        layer1.addNeuron(input2);
+        layer1.addNeuron(input3);
+        layer1.addNeuron(input4);*/
+        
+        ArrayList<Neuron> listInput = new ArrayList<Neuron>();
+        
+        listInput.add(input1);
+        listInput.add(input2);
+        listInput.add(input3);
+        listInput.add(input4);
+        
+        web.setInputNeurons(listInput);
+
+        
+        //Conexões entre primeira e segunda camada com pesos
+        /*
+        web.createConnection(input1, scoreAtk, 0.7);
+        web.createConnection(input2, scoreDef, 0.3);
+        web.createConnection(input3, advantage, 0.6);
+        web.createConnection(input4, homeAdvantage, 0.4);
+        */
+        scoreAtk.addInputConnection(input1, 0.7);
+        scoreDef.addInputConnection(input2, 0.3);
+        advantage.addInputConnection(input3, 0.6);
+        homeAdvantage.addInputConnection(input4, 0.4);
+        
+        
+
+        //Camada final
+        Layer layer3 = new Layer();
+        
+        //Neuronios finais
+        Neuron neuronFinal = new Neuron();
+        //layer3.addNeuron(neuronFinal);
+        
+        neuronFinal.setInputFunction(function);
+        
+       /* web.createConnection(scoreAtk, neuronFinal, 0.5);
+        web.createConnection(scoreDef, neuronFinal, 0.5);
+        web.createConnection(advantage, neuronFinal, 0.5);
+        web.createConnection(homeAdvantage, neuronFinal, 0.5);
+        */
+        neuronFinal.addInputConnection(scoreAtk, 0.5);
+        neuronFinal.addInputConnection(scoreDef, 0.5);
+        neuronFinal.addInputConnection(advantage, 0.5);
+        neuronFinal.addInputConnection(homeAdvantage, 0.5);
+
+        
+        
+        ArrayList<Neuron> listOutput = new ArrayList<Neuron>();
+        listOutput.add(neuronFinal);
+        web.setOutputNeurons(listOutput);
         
         
         
         
+        web.learn(data, s);
         
         
     }
-    
-    
-  
     
 }

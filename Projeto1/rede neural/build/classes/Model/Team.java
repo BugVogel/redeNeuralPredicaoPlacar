@@ -60,7 +60,7 @@ public class Team {
     }
 
     public float getDefenseValue() {
-        return defenseValue*(-1);
+        return defenseValue;
     }
 
     public void setDefenseValue(float defenseValue) {

@@ -1,0 +1,5 @@
+atk;defAdv;casa;ultimoJogo;SaidaEsperada
+
+
+
+
