@@ -6,8 +6,8 @@ package Model;
 public class Team {
     
     private String name;
-    private float attackValue, defenseValue;
-    private int matchCount;
+    private double attackValue, defenseValue;
+    private double matchCount;
     public static int ID=1;
     
     public Team(String name){
@@ -21,11 +21,11 @@ public class Team {
     /*Essa função faz adições no valor de ataque de um time. O valor de ataque é sempre definido pelo saldo de gols dividido pelo 
       número de partidas jogadas, guardado na variável matchCount.*/
     
-    public float addAttackValue(int attackAdder){
+    public double addAttackValue(double attackAdder){
         
-        float fullValue = (float)(this.attackValue*matchCount);
+        double fullValue = (double)(this.attackValue*matchCount);
         fullValue = fullValue + attackAdder;
-        attackValue = (fullValue/(++matchCount));
+        attackValue = (fullValue/matchCount);
         
         return this.attackValue; //Retorna o novo valor de ataque
     }
@@ -34,11 +34,11 @@ public class Team {
      dividido pelo número de partidas jogadas. O saldo defensivo de um time é sempre negativo, ou seja, o valor é sempre subtraído.
      Apesar disso, a entrada deve ser positiva. */
     
-    public float addDefenseValue(int defenseAdder){
+    public double addDefenseValue(double defenseAdder){
         
-        float fullValue = (float)(this.defenseValue*matchCount);
+        double fullValue = (double)(this.defenseValue*matchCount);
         fullValue = fullValue - defenseAdder;
-        defenseValue = (fullValue/(++matchCount));
+        defenseValue = (fullValue/matchCount);
         
         return this.defenseValue; //Retorna o novo valor de defesa
     }
@@ -51,28 +51,28 @@ public class Team {
         this.name = name;
     }
 
-    public float getAttackValue() {
+    public double getAttackValue() {
         return attackValue;
     }
 
-    public void setAttackValue(float attackValue) {
+    public void setAttackValue(double attackValue) {
         this.attackValue = attackValue;
     }
 
-    public float getDefenseValue() {
+    public double getDefenseValue() {
         return defenseValue*(-1);
     }
 
-    public void setDefenseValue(float defenseValue) {
+    public void setDefenseValue(double defenseValue) {
         this.defenseValue = defenseValue;
     }
     
     
-    public int getMatchCount(){
+    public double getMatchCount(){
         return matchCount;
     }
     
-    public int setMatchCount(int matchCount){
+    public double setMatchCount(double matchCount){
         return this.matchCount = matchCount;
     }
     

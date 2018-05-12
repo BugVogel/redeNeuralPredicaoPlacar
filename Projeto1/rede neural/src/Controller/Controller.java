@@ -27,9 +27,16 @@ public class Controller {
     
       public double normalize(double num){
         
-        
+        double numWithSign = num;
+  
         num = (num-1)/9;
         
+        if(numWithSign<0 && num >0){
+            num *= -1;
+        }
+        else if(numWithSign >0 && num<0){
+            num*= -1;
+        }
         
         return num;
     }

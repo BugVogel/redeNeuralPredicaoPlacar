@@ -18,6 +18,11 @@ import org.neuroph.nnet.*;
 import org.neuroph.util.*;
 import Controller.*;
 import Model.*;
+import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,7 +49,9 @@ public class Redeneural {
         LinkedList<String> teams = r.getTeams();
         int round=1, index = 0;
         double atk = 0, def = 0;
-        final int divNormScore = 10;
+        final double divNormScore = 10;
+        
+        
         
         
    
@@ -61,22 +68,24 @@ public class Redeneural {
             
             while(it.hasNext()){
                 Team team = (Team)it.next();
-                int[] atkDef = r.returnAtkDefScore(team.getName(), j+1);
+                double[] atkDef = r.returnAtkDefScore(team.getName(), j+1);
                 
                 if(atkDef != null){
+                    
+                    team.setMatchCount(team.getMatchCount()+1);
                     team.addAttackValue(atkDef[0]);
                     team.addDefenseValue(atkDef[1]);
-                    team.setMatchCount(team.getMatchCount()+1);
+                    
                     
                     double[] row = new double[6];
                     
                     row[0] = (double) team.getID();
                     row[1] = team.getAttackValue()/divNormScore;
                     row[2] = team.getDefenseValue()/divNormScore;
-                    String last = r.returnLastMatch(team.getName(), j+1);
+                    double[] last = r.returnAtkDefScore(team.getName(), j+1);
                    
                     if(last != null){
-                        String[] lastSplit = last.split("#");
+                        /*String[] lastSplit = last.split("#");
                         if(lastSplit[0].equals(team.getName())){
                             atk = Double.parseDouble(lastSplit[2]);
                             def = Double.parseDouble(lastSplit[3]);
@@ -85,15 +94,19 @@ public class Redeneural {
                             atk = Double.parseDouble(lastSplit[3]);
                             def = Double.parseDouble(lastSplit[2]);
                         }
+                        */
+                        atk = last[0];
+                        def = last[1];
                         
                         row[3] = c.normalize((double)(1-((atk+1)/(def+1))));
                         
-                       
+                        
                     }
                     else{
                         row[3] = 0.0;
+                        
                     }
-                                        
+                                       
                     row[4] = r.isHome(team.getName(), j+1);
                     row[5] = atkDef[0]/divNormScore;
                     
@@ -105,6 +118,35 @@ public class Redeneural {
             
         }
             
+        
+        File f = new File("ultimosResultados.txt");
+        FileWriter fw = new FileWriter(f);
+        PrintWriter pF = new PrintWriter(fw);
+        
+        it = c.getListaTimes().iterator();
+        
+        while(it.hasNext()){
+            
+            Team t = (Team)it.next();
+            
+            String line = "";
+            
+            double atkTeam = t.getAttackValue()/divNormScore;
+            double defTeam = t.getDefenseValue()/divNormScore;
+            
+            
+            line += t.getName() + ";";
+            line += atkTeam +";";
+            line += defTeam;
+            
+            pF.println(line);
+            
+            
+        }
+        
+        pF.close();
+        fw.close();
+        
 
             /*LOGICA DE TREINAR A REDE NEURAL*/
             
@@ -146,8 +188,47 @@ public class Redeneural {
                 return result; 
             }
         };
-            
+           
         
+        
+        
+        
+        
+        
+                
+       
+       File file = new File("BDRedeNeural.txt"); 
+       FileWriter fileW = new FileWriter(file);
+       PrintWriter write = new PrintWriter(fileW);
+      
+        
+       
+       for(int i=0; i<data.size(); i++){
+           
+           DataSetRow row = data.get(i);
+           double[] values = row.getInput();
+           String line = "";
+           
+           for(int j =1; j<values.length-1; j++){
+               
+               
+               line += values[j] + ";";
+               
+           }
+           
+           line += values[5];
+           
+         
+           
+           
+           write.println(line);
+
+       }
+       
+       write.close();
+       fileW.close();
+       
+       
         
         
         

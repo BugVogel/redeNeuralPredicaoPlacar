@@ -160,7 +160,7 @@ public class RoundReader {
     /*Função que retorna o score de ataque na posição 0 e de defesa na posição 1 de um time, para uma determinada rodada.
       Essa função é útil para obter rapidamente os dados necessários para treinar a rede neural.*/
     
-    public int[] returnAtkDefScore(String teamName, int round) throws FileNotFoundException, IOException{
+    public double[] returnAtkDefScore(String teamName, int round) throws FileNotFoundException, IOException{
         String currentPath;
         String line;
         int count = 0;
@@ -181,7 +181,7 @@ public class RoundReader {
                         }
                         if(count == round){
 
-                            int[] returning = new int[2];
+                            double[] returning = new double[2];
                             
                             if(lineSplit[0].equals(teamName) ){
                                 returning[0] = Integer.parseInt(lineSplit[2]);
